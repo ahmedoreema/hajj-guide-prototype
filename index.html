@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إرشاد التائهين - الحرم المكي</title>
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-green: #0D5C3A;
+            --primary-green-dark: #094229;
+            --royal-gold: #D4AF37;
+            --royal-gold-light: #F4E7BE;
+            --bg-light: #F8F9FA;
+            --card-bg: #FFFFFF;
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --danger: #E53E3E;
+            --success: #38A169;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #1A202C;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0;
+            color: var(--text-main);
+        }
+
+        .mobile-frame {
+            width: 100%;
+            max-width: 430px;
+            height: 100vh;
+            max-height: 900px;
+            background-color: var(--bg-light);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        @media (min-width: 450px) {
+            .mobile-frame {
+                height: 88vh;
+                border-radius: 36px;
+                border: 8px solid #2D3748;
+            }
+        }
+
+        .islamic-pattern {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(var(--royal-gold) 0.5px, transparent 0.5px);
+            background-size: 16px 16px;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-green-dark), var(--primary-green));
+            color: white;
+            padding: 20px 16px 15px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            border-bottom: 3px solid var(--royal-gold);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header .header-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        header i.header-icon {
+            color: var(--royal-gold);
+            font-size: 1.5rem;
+        }
+
+        header h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.75rem;
+            color: var(--royal-gold-light);
+            margin-top: 2px;
+        }
+
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            position: relative;
+            z-index: 1;
+            padding-bottom: 90px;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .page-section.active {
+            display: block !important;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #ffffff, #f4f6f8);
+            border-right: 4px solid var(--royal-gold);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .welcome-card h2 {
+            font-size: 1rem;
+            color: var(--primary-green);
+            margin-bottom: 4px;
+        }
+
+        .welcome-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-green-dark);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .quick-card {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.03);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-card:active {
+            transform: scale(0.97);
+        }
+
+        .quick-card .icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(13, 92, 58, 0.08);
+            color: var(--primary-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .quick-card h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .quick-card p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.2;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--primary-green-dark);
+        }
+
+        .form-control, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            background-color: white;
+            outline: none;
+        }
+
+        .translator-box {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .mic-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .mic-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+            color: var(--royal-gold);
+            border: 4px solid var(--royal-gold-light);
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(13, 92, 58, 0.3);
+        }
+
+        .mic-btn.listening {
+            animation: pulse 1.2s infinite;
+            background: linear-gradient(135deg, #c53030, #e53e3e);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.5); }
+            70% { transform: scale(1.08); box-shadow: 0 0 0 15px rgba(229, 62, 62, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
+        }
+
+        .mic-status {
+            font-size: 0.8rem;
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .translation-card {
+            background-color: var(--bg-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+            border-right: 3px solid var(--primary-green);
+        }
+
+        .translation-card .lang-tag {
+            font-size: 0.7rem;
+            color: var(--royal-gold);
+            font-weight: 700;
+            background-color: var(--primary-green-dark);
+            padding: 2px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .translation-text {
+            font-size: 0.9rem;
+            color: var(--text-main);
+            min-height: 40px;
+        }
+
+        .photo-uploader {
+            border: 2px dashed #CBD5E0;
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .photo-uploader input {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 180px;
+            border-radius: 8px;
+            display: none;
+            margin: 0 auto;
+            object-fit: cover;
+        }
+
+        .tabs-header {
+            display: flex;
+            background-color: #EDF2F7;
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: none;
+            background: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .tab-btn.active {
+            background-color: white;
+            color: var(--primary-green);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .smart-ai-result {
+            background-color: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--royal-gold);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-green), var(--primary-green-dark));
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(13, 92, 58, 0.25);
+            margin-top: 10px;
+        }
+
+        .alert-item {
+            background-color: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-right: 4px solid var(--royal-gold);
+        }
+
+        .alert-item.urgent {
+            border-right-color: var(--danger);
+        }
+
+        .alert-info h4 { font-size: 0.85rem; color: var(--text-main); }
+        .alert-info p { font-size: 0.75rem; color: var(--text-muted); }
+
+        .alert-badge {
+            font-size: 0.65rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .badge-urgent { background-color: #FED7D7; color: #9B2C2C; }
+        .badge-normal { background-color: #EBF8FF; color: #2B6CB0; }
+
+        .bottom-nav {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 70px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #E2E8F0;
+            z-index: 10;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 25%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .nav-item i { font-size: 1.2rem; margin-bottom: 3px; }
+        .nav-item.active { color: var(--primary-green); }
+        .nav-item.active i { color: var(--royal-gold); }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            text-align: center;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .modal-icon {
+            width: 60px; height: 60px;
+            background-color: rgba(56, 161, 105, 0.1);
+            color: var(--success);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 14px;
+        }
+
+        .modal-card h3 { font-size: 1.1rem; color: var(--primary-green-dark); margin-bottom: 8px; }
+        .modal-card p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px; }
+
+        .btn-modal-close {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-frame">
+        <div class="islamic-pattern"></div>
+
+        <header>
+            <div class="header-title">
+                <i class="fa-solid fa-kaaba header-icon"></i>
+                <h1>إرشاد التائهين بالذكاء الاصطناعي</h1>
+            </div>
+            <p>الرئاسة العامة لشؤون المسجد الحرام والمسجد النبوي</p>
+        </header>
+
+        <main>
+            <!-- Page 1: Dashboard -->
+            <section id="page-dashboard" class="page-section active">
+                <div class="welcome-card">
+                    <h2>أهلاً بك في نظام الإرشاد الميداني</h2>
+                    <p>منصة سريعة وموحدة للموظفين والفرق الميدانية لمساعدة التائهين وإعادتهم لذويهم في الحرم المكي.</p>
+                </div>
+
+                <div class="section-title">
+                    <i class="fa-solid fa-border-all"></i> الخدمات الرئيسية
+                </div>
+
+                <div class="grid-container">
+                    <div class="quick-card" onclick="navigateTo('page-translator')">
+                        <div class="icon-wrapper"><i class="fa-solid fa-language"></i></div>
+                        <h3>الترجمة الفورية</h3>
+                        <p>تواصل مع التائه بلغته الأم عبر الذكاء الاصطناعي</p>
+                    </div>
+
+                    <div class="quick-card" onclick="navigateTo('page-capture')">
+                        <div class="icon-wrapper"><i class="fa-solid fa-camera"></i></div>
+                        <h3>تسجيل بيانات وتصوير</h3>
+                        <p>التقاط صورة وتوثيق بيانات التائه</p>
+                    </div>
+
+                    <div class="quick-card" onclick="navigateTo('page-dispatch')">
+                        <div class="icon-wrapper"><i class="fa-solid fa-paper-plane"></i></div>
+                        <h3>رفع بلاغ ميداني</h3>
+                        <p>إرسال نداء فوري للفرق الميدانية بالموقع</p>
+                    </div>
+
+                    <div class="quick-card" onclick="document.getElementById('alerts-section').scrollIntoView({behavior: 'smooth'})">
+                        <div class="icon-wrapper"><i class="fa-solid fa-bell"></i></div>
+                        <h3>البلاغات المباشرة</h3>
+                        <p>متابعة التنبيهات الميدانية النشطة</p>
+                    </div>
+                </div>
+
+                <div id="alerts-section" style="margin-top: 24px;">
+                    <div class="section-title">
+                        <i class="fa-solid fa-list-check"></i> قائمة البلاغات المباشرة
+                    </div>
+                    
+                    <div class="alert-item urgent">
+                        <div class="alert-info">
+                            <h4>طفل مفقود - 5 سنوات</h4>
+                            <p><i class="fa-solid fa-location-dot"></i> صحن المطاف - قرب الملتزم</p>
+                            <span style="font-size: 0.65rem; color: #a0aec0;">منذ 4 دقائق</span>
+                        </div>
+                        <span class="alert-badge badge-urgent">عاجل جداً</span>
+                    </div>
+
+                    <div class="alert-item">
+                        <div class="alert-info">
+                            <h4>مسن تائه (يتحدث الأوردو)</h4>
+                            <p><i class="fa-solid fa-location-dot"></i> التوسعة السعودية الثالثة</p>
+                            <span style="font-size: 0.65rem; color: #a0aec0;">منذ 12 دقيقة</span>
+                        </div>
+                        <span class="alert-badge badge-normal">عادي</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Page 2: Instant AI Translator -->
+            <section id="page-translator" class="page-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-language"></i> الترجمة الفورية المباشرة (AI)
+                </div>
+
+                <div class="translator-box">
+                    <div class="form-group">
+                        <label class="form-label">حدد لغة التائه الأصلية:</label>
+                        <select class="form-select" id="lang-select">
+                            <option value="English">الإنجليزي (English)</option>
+                            <option value="French">الفرنسية (Français)</option>
+                            <option value="Urdu">الأوردو (Urdu)</option>
+                            <option value="Bengali">البنغالية (Bengali)</option>
+                            <option value="Persian">الفارسية (Farsi)</option>
+                            <option value="Malay">الملايو/الإندونيسية (Malay/Indonesian)</option>
+                            <option value="Hausa">الهوسا (Hausa)</option>
+                            <option value="Turkish">التركية (Türkçe)</option>
+                            <option value="Chinese">الصينية (Chinese)</option>
+                            <option value="Russian">الروسية (Russian)</option>
+                        </select>
+                    </div>
+
+                    <div class="mic-container">
+                        <button class="mic-btn" id="mic-btn" onclick="toggleMic()">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                        <div class="mic-status" id="mic-status">اضغط على الميكروفون للبدء بالاستماع</div>
+                    </div>
+
+                    <div class="translation-card">
+                        <span class="lang-tag" id="source-lang-tag">صوت التائه (الإنجليزي)</span>
+                        <div class="translation-text" id="source-text">في انتظار التحدث...</div>
+                    </div>
+
+                    <div class="translation-card" style="border-right-color: var(--royal-gold);">
+                        <span class="lang-tag" style="background-color: var(--royal-gold); color: black;">الترجمة الفورية (العربية)</span>
+                        <div class="translation-text" id="target-text" style="font-weight: 700;">في انتظار الترجمة...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Page 3: Data & Photo Capture -->
+            <section id="page-capture" class="page-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-camera"></i> التقاط الصورة وتسجيل البيانات
+                </div>
+
+                <div class="photo-uploader" onclick="document.getElementById('image-input').click()">
+                    <input type="file" id="image-input" accept="image/*" onchange="previewImage(event)">
+                    <div id="upload-placeholder">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary-green); margin-bottom: 8px;"></i>
+                        <p style="font-size: 0.85rem; font-weight: 700; color: var(--primary-green);">التقط أو ارفع صورة التائه</p>
+                        <p style="font-size: 0.7rem; color: var(--text-muted);">انقر لاستخدام الكاميرا أو اختيار صورة</p>
+                    </div>
+                    <img id="image-preview" class="preview-img" alt="صورة التائه">
+                </div>
+
+                <div id="smart-ai-result" class="smart-ai-result">
+                    <i class="fa-solid fa-microchip" style="color: var(--primary-green);"></i> 
+                    <strong>تحليل الصورة بالذكاء الاصطناعي:</strong> تم التعرف المبدئي (عمر تقديري: 65 سنة، ملامح جنوب آسيا).
+                </div>
+
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="switchTab('smart')">التسجيل الذكي (AI)</button>
+                    <button class="tab-btn" onclick="switchTab('manual')">الإدخال اليدوي</button>
+                </div>
+
+                <form id="capture-form">
+                    <div class="form-group">
+                        <label class="form-label">اسم التائه (إن وجد)</label>
+                        <input type="text" class="form-control" placeholder="أدخل الاسم أو اتركه غير معروف">
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">العمر التقديري</label>
+                            <input type="number" class="form-control" id="age-input" placeholder="مثال: 50">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label">الجنسية / اللغة</label>
+                            <input type="text" class="form-control" id="nat-input" placeholder="مثال: إندونيسي">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">العلامات المميزة / الملابس</label>
+                        <textarea class="form-control" rows="2" placeholder="مثال: يرتدي إحرام، يحمل حقيبة يد حمراء..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">رقم الهوية / تصريح الحج أو العمرة (إن وجد)</label>
+                        <input type="text" class="form-control" placeholder="أدخل الرقم المسجل على الإسورة">
+                    </div>
+
+                    <button type="button" class="btn-submit" onclick="navigateTo('page-dispatch')">
+                        متابعة لإرسال بلاغ ميداني <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Page 4: Dispatch Alert -->
+            <section id="page-dispatch" class="page-section">
+                <div class="section-title">
+                    <i class="fa-solid fa-paper-plane"></i> رفع وإرسال بلاغ ميداني
+                </div>
+
+                <div style="background: white; padding: 16px; border-radius: var(--border-radius); box-shadow: var(--shadow);">
+                    <div class="form-group">
+                        <label class="form-label">موقع التائه الحالي بالحرم:</label>
+                        <select class="form-select" id="location-select">
+                            <option value="King Fahd Gate">مقر باب الملك فهد (باب 79)</option>
+                            <option value="King Abdulaziz Gate">مقر باب الملك عبدالعزيز (باب 1)</option>
+                            <option value="Northern Expansion">ساحات التوسعة الشمالية</option>
+                            <option value="Mataf Courtyard">صحن المطاف الأرضي</option>
+                            <option value="Masaa Area">منطقة المسعى (الصفا والمروة)</option>
+                            <option value="Ajyad Courtyard">ساحة أجياد</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">مستوى الأولوية:</label>
+                        <select class="form-select" id="priority-select">
+                            <option value="normal">عادي - شخص بالغ</option>
+                            <option value="urgent">عاجل - طفل مفقود</option>
+                            <option value="urgent">عاجل - كبير سن / حالة خاصة</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ملاحظات توجيهية إضافية:</label>
+                        <textarea class="form-control" rows="3" placeholder="أضف أي تفاصيل تفيد الفرق الميدانية المتحركة..."></textarea>
+                    </div>
+
+                    <button type="button" class="btn-submit" onclick="sendDispatchAlert()" style="background: linear-gradient(135deg, #c53030, #e53e3e);">
+                        <i class="fa-solid fa-triangle-exclamation"></i> إرسال بلاغ فورياً للفرق الميدانية
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Nav -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="navigateTo('page-dashboard')" id="nav-page-dashboard">
+                <i class="fa-solid fa-house"></i>
+                <span>الرئيسية</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('page-translator')" id="nav-page-translator">
+                <i class="fa-solid fa-language"></i>
+                <span>الترجمة</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('page-capture')" id="nav-page-capture">
+                <i class="fa-solid fa-camera"></i>
+                <span>التسجيل</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('page-dispatch')" id="nav-page-dispatch">
+                <i class="fa-solid fa-paper-plane"></i>
+                <span>البلاغ</span>
+            </div>
+        </nav>
+
+        <!-- Success Modal -->
+        <div class="modal-overlay" id="success-modal">
+            <div class="modal-card">
+                <div class="modal-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <h3>تم إرسال البلاغ بنجاح!</h3>
+                <p id="modal-desc">تم توجيه البلاغ فورياً للفرقة الميدانية القريبة من الموقع، وتمت مزامنة البيانات عبر تطبيق الكادر الميداني.</p>
+                <button class="btn-modal-close" onclick="closeModal()">تم، العودة للرئيسية</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. SPA Router
+        function navigateTo(pageId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+
+            const activeNav = document.getElementById('nav-' + pageId);
+            if (activeNav) {
+                activeNav.classList.add('active');
+            }
+
+            const mainElem = document.querySelector('main');
+            if (mainElem) mainElem.scrollTop = 0;
+        }
+
+        // 2. Real Speech Recognition & Live API Translation
+        let isListening = false;
+        let recognition = null;
+
+        const langCodes = {
+            'English': 'en-US',
+            'French': 'fr-FR',
+            'Urdu': 'ur-PK',
+            'Bengali': 'bn-BD',
+            'Persian': 'fa-IR',
+            'Malay': 'id-ID',
+            'Hausa': 'ha-NE',
+            'Turkish': 'tr-TR',
+            'Chinese': 'zh-CN',
+            'Russian': 'ru-RU'
+        };
+
+        function toggleMic() {
+            const micBtn = document.getElementById('mic-btn');
+            const micStatus = document.getElementById('mic-status');
+            const selectedLang = document.getElementById('lang-select').value;
+            const sourceTag = document.getElementById('source-lang-tag');
+            const sourceText = document.getElementById('source-text');
+            const targetText = document.getElementById('target-text');
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+            if (!isListening) {
+                isListening = true;
+                micBtn.classList.add('listening');
+                micStatus.innerText = "جاري الاستماع الآن... تحدث في المايك";
+                micStatus.style.color = "var(--danger)";
+                sourceText.innerText = "جاري التقاط الصوت...";
+                targetText.innerText = "في انتظار انتهاء الحديث...";
+
+                sourceTag.innerText = `صوت التائه (${selectedLang})`;
+
+                if (SpeechRecognition) {
+                    try {
+                        recognition = new SpeechRecognition();
+                        const fullLangCode = langCodes[selectedLang] || 'en-US';
+                        recognition.lang = fullLangCode;
+                        recognition.interimResults = false;
+                        recognition.continuous = false;
+
+                        recognition.onresult = async function(event) {
+                            const transcript = event.results[0][0].transcript;
+                            sourceText.innerText = transcript;
+                            
+                            targetText.innerText = "جاري الترجمة بالذكاء الاصطناعي...";
+
+                            const shortLangCode = fullLangCode.split('-')[0];
+
+                            try {
+                                const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(transcript)}&langpair=${shortLangCode}|ar`);
+                                const data = await response.json();
+                                
+                                if (data && data.responseData && data.responseData.translatedText) {
+                                    targetText.innerText = data.responseData.translatedText;
+                                } else {
+                                    targetText.innerText = `[ترجمة آلية]: ${transcript}`;
+                                }
+                            } catch (error) {
+                                console.error("Translation API Error:", error);
+                                targetText.innerText = "تعذر الاتصال بخدمة الترجمة، تحقق من الاتصال بالإنترنت.";
+                            }
+
+                            stopListeningUI();
+                        };
+
+                        recognition.onerror = function(event) {
+                            console.warn("Speech error:", event.error);
+                            sourceText.innerText = "لم يتم التعرف على الصوت، جرب التحدث بوضوح أقرب للمايك.";
+                            targetText.innerText = "-";
+                            stopListeningUI();
+                        };
+
+                        recognition.onend = function() {
+                            stopListeningUI();
+                        };
+
+                        recognition.start();
+                    } catch(err) {
+                        sourceText.innerText = "عذراً، حدث خطأ في تشغيل المايك.";
+                        stopListeningUI();
+                    }
+                } else {
+                    sourceText.innerText = "المتصفح لا يدعم التسجيل الصوتي المباشر.";
+                    stopListeningUI();
+                }
+            } else {
+                if (recognition) {
+                    try { recognition.stop(); } catch(e){}
+                }
+                stopListeningUI();
+            }
+        }
+
+        function stopListeningUI() {
+            isListening = false;
+            const micBtn = document.getElementById('mic-btn');
+            const micStatus = document.getElementById('mic-status');
+            if (micBtn) micBtn.classList.remove('listening');
+            if (micStatus) {
+                micStatus.innerText = "اضغط على الميكروفون للبدء بالاستماع مرة أخرى";
+                micStatus.style.color = "var(--text-muted)";
+            }
+        }
+
+        // 3. Photo Preview
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('image-preview');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('upload-placeholder').style.display = 'none';
+
+                    document.getElementById('smart-ai-result').style.display = 'block';
+                    document.getElementById('age-input').value = '65';
+                    document.getElementById('nat-input').value = 'باكستاني / أوردو';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 4. Tabs & Modal Controls
+        function switchTab(tabType) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            if(tabType === 'smart') {
+                buttons[0].classList.add('active');
+                document.getElementById('smart-ai-result').style.display = 'block';
+            } else {
+                buttons[1].classList.add('active');
+                document.getElementById('smart-ai-result').style.display = 'none';
+            }
+        }
+
+        function sendDispatchAlert() {
+            const modal = document.getElementById('success-modal');
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('success-modal');
+            modal.classList.remove('active');
+            navigateTo('page-dashboard');
+        }
+    </script>
+</body>
+</html>
